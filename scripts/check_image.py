@@ -1,7 +1,11 @@
 """Build and smoke-test against disposable local containers, never production data."""
+import argparse
+import hashlib
 import json
 from pathlib import Path
 import subprocess
+import tarfile
+import tempfile
 
 
 def run(*args, capture=False):
@@ -9,9 +13,31 @@ def run(*args, capture=False):
     return result.stdout.strip() if capture else None
 
 
+def image_config_digest(image):
+    # Docker's containerd image store reports a manifest digest as .Id, while
+    # the classic store reports the config digest. Inspect the saved config
+    # bytes instead so both stores verify the same image content.
+    with tempfile.TemporaryFile() as output:
+        subprocess.run(["docker", "image", "save", image], stdout=output, check=True)
+        output.seek(0)
+        with tarfile.open(fileobj=output) as archive:
+            manifests = json.load(archive.extractfile("manifest.json"))
+            if len(manifests) != 1:
+                raise ValueError("Expected one image in the Docker archive")
+            content = archive.extractfile(manifests[0]["Config"]).read()
+            return "sha256:" + hashlib.sha256(content).hexdigest()
+
+
 def main():
-    image = "bwdc-ci:local"
-    run("docker", "build", "--platform", "linux/amd64", "-t", image, ".")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--image", help="Test an existing image without rebuilding it")
+    parser.add_argument("--config-digest", help="Require this exact Docker image ID")
+    args = parser.parse_args()
+    image = args.image or "bwdc-ci:local"
+    if args.image is None:
+        run("docker", "build", "--platform", "linux/amd64", "-t", image, ".")
+    if args.config_digest and image_config_digest(image) != args.config_digest:
+        raise ValueError("Loaded image differs from the tested OCI archive")
     lock = json.loads(Path("release.json").read_text())
     base = ("docker", "run", "--rm", "--platform", "linux/amd64", "--read-only",
             "--cap-drop=ALL", "--security-opt=no-new-privileges", "--network=none",
