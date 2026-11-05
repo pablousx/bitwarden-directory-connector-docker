@@ -1,5 +1,6 @@
 *
 !Dockerfile
+!LICENSE
 !release.json
 !scripts/
 !scripts/entrypoint.py

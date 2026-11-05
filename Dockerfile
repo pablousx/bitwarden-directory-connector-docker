@@ -21,10 +21,11 @@ COPY --from=download /out/bwdc /out/dc_native.linux-x64-gnu.node /usr/local/lib/
 RUN ln -s /usr/local/lib/bwdc/bwdc /usr/local/bin/bwdc
 COPY scripts/entrypoint.py /usr/local/bin/connector
 COPY release.json /usr/local/share/connector/release.json
+COPY LICENSE /usr/local/share/connector/LICENSE
 COPY third_party/bitwarden-LICENSE.txt third_party/NOTICE /usr/local/share/connector/
 LABEL org.opencontainers.image.title="Bitwarden Directory Connector (community container)" \
       org.opencontainers.image.description="Official Directory Connector CLI with a minimal periodic sync supervisor" \
-      org.opencontainers.image.licenses="GPL-3.0"
+      org.opencontainers.image.licenses="MIT AND GPL-3.0-only"
 ENV HOME=/data BITWARDENCLI_CONNECTOR_APPDATA_DIR=/data BITWARDENCLI_CONNECTOR_PLAINTEXT_SECRETS=true
 USER 10001:10001
 WORKDIR /data
