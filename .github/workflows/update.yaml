@@ -37,6 +37,11 @@ jobs:
           else
             echo 'changed=true' >> "$GITHUB_OUTPUT"
           fi
+      - name: Install repository test dependency
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-yaml
       - run: python3 -m unittest discover -s tests -v
         if: steps.changes.outputs.changed == 'true'
       - name: Create or update the release PR

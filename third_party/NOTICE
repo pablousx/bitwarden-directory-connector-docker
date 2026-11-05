@@ -12,3 +12,8 @@ https://github.com/bitwarden/directory-connector/archive/refs/tags/v2026.10.0.ta
 The updater maintains this source URL when advancing the upstream release.
 The container supervisor is independent community packaging; it is not a
 Bitwarden-supported product. No upstream binaries are modified.
+
+The independently authored container supervisor, packaging scripts, configuration
+and project documentation are licensed under the MIT License. See the
+repository-root LICENSE, also installed alongside this NOTICE in the container.
+This does not change the license of the upstream binaries.

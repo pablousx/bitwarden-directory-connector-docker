@@ -3,3 +3,11 @@ secrets/
 data/
 __pycache__/
 *.pyc
+
+# Local credentials, generated archives and development files
+.env.*
+!.env.example
+data.json
+*.oci.tar
+.venv/
+.DS_Store
