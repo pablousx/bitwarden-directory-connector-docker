@@ -1,0 +1,8 @@
+*
+!Dockerfile
+!release.json
+!scripts/
+!scripts/entrypoint.py
+!third_party/
+!third_party/bitwarden-LICENSE.txt
+!third_party/NOTICE

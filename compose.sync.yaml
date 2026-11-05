@@ -1,0 +1,4 @@
+services:
+  connector:
+    command: ["run"]
+    restart: unless-stopped

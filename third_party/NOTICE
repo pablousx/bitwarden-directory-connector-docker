@@ -1,0 +1,14 @@
+This community container redistributes the unmodified Linux amd64 CLI and native
+module from Bitwarden Directory Connector. Bitwarden and its contributors retain
+their respective copyrights. See bitwarden-LICENSE.txt (GNU GPL version 3).
+
+The exact upstream release and SHA-256 are recorded in release.json alongside
+this file. Corresponding source, build instructions, dependency lockfiles and
+copyright notices for that release are available from the versioned upstream:
+
+https://github.com/bitwarden/directory-connector
+https://github.com/bitwarden/directory-connector/archive/refs/tags/v2026.10.0.tar.gz
+
+The updater maintains this source URL when advancing the upstream release.
+The container supervisor is independent community packaging; it is not a
+Bitwarden-supported product. No upstream binaries are modified.

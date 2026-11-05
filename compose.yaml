@@ -1,0 +1,35 @@
+services:
+  connector:
+    image: ${BWDC_IMAGE:-bitwarden-directory-connector:local}
+    build:
+      context: .
+    platform: linux/amd64
+    command: ["test"]
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m,mode=1777
+    environment:
+      BWDC_DIRECTORY: ${BWDC_DIRECTORY:-0}
+      BWDC_SERVER: ${BWDC_SERVER:-https://vault.bitwarden.com}
+      BWDC_SYNC_INTERVAL: ${BWDC_SYNC_INTERVAL:-300}
+      BW_CLIENTID_FILE: /run/secrets/client_id
+      BW_CLIENTSECRET_FILE: /run/secrets/client_secret
+    secrets: [client_id, client_secret]
+    volumes:
+      - connector-data:/data
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+secrets:
+  client_id:
+    file: ./secrets/client_id
+  client_secret:
+    file: ./secrets/client_secret
+volumes:
+  connector-data:
