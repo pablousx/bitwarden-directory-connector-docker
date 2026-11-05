@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+defaults:
+  run:
+    shell: bash
 concurrency:
   group: official-release-update
   cancel-in-progress: false
@@ -24,11 +27,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/update_release.py
-      # PRs created by GITHUB_TOKEN do not trigger pull_request workflows.
-      # Validate the changed files here before opening the review request.
+      # The bot PR's native pull_request workflow may require owner approval.
+      # A workflow_dispatch run cannot satisfy the protected PR's required check.
+      - name: Detect release changes
+        id: changes
+        run: |
+          if git diff --quiet -- release.json third_party/NOTICE; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
       - run: python3 -m unittest discover -s tests -v
-      - run: python3 scripts/check_image.py
-      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        if: steps.changes.outputs.changed == 'true'
+      - name: Create or update the release PR
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: automation/official-release
@@ -36,9 +48,9 @@ jobs:
           title: 'chore: update official Directory Connector release'
           body: |
             Updates the official Linux CLI version and SHA-256 lock from GitHub release metadata.
-            Runtime tests and an amd64 image build/smoke test ran in the update workflow before this PR.
+            Approve the native pull_request workflow if GitHub requests approval; its required validate check builds and smoke-tests the candidate without publishing.
             Review upstream release notes and configuration migrations before merging.
-            GITHUB_TOKEN-created PRs do not trigger a separate pull_request CI run; see the update workflow run.
+            Wait for the native PR validate check to pass before merging. A manual workflow_dispatch run on this branch does not satisfy PR-required checks.
           add-paths: |
             release.json
             third_party/NOTICE
