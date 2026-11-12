@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM debian:bookworm-slim@sha256:99c0b25c46d0214d5a2091092e7908907dcaecd6a962cde0ac700acee222b6f3 AS download
+FROM debian:bookworm-slim@sha256:734a72b3d6142a71993b4bc580ca01d8ca687f77a2c422d96a961d3376b179bc AS download
 ARG TARGETARCH
 RUN test "$TARGETARCH" = amd64
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl unzip python3 && rm -rf /var/lib/apt/lists/*
@@ -12,7 +12,7 @@ RUN python3 -c 'import json; d=json.load(open("/release.json")); print(d["versio
     && test -f /out/bwdc && test -f /out/dc_native.linux-x64-gnu.node \
     && chmod 0755 /out/bwdc
 
-FROM debian:bookworm-slim@sha256:99c0b25c46d0214d5a2091092e7908907dcaecd6a962cde0ac700acee222b6f3
+FROM debian:bookworm-slim@sha256:734a72b3d6142a71993b4bc580ca01d8ca687f77a2c422d96a961d3376b179bc
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libsecret-1-0 libstdc++6 libatomic1 python3 \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --gid 10001 connector && useradd --uid 10001 --gid 10001 --home-dir /data --no-create-home connector \
