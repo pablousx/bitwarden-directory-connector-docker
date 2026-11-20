@@ -7,7 +7,7 @@ this file. Corresponding source, build instructions, dependency lockfiles and
 copyright notices for that release are available from the versioned upstream:
 
 https://github.com/bitwarden/directory-connector
-https://github.com/bitwarden/directory-connector/archive/refs/tags/v2026.10.0.tar.gz
+https://github.com/bitwarden/directory-connector/archive/refs/tags/v2026.11.0.tar.gz
 
 The updater maintains this source URL when advancing the upstream release.
 The container supervisor is independent community packaging; it is not a
